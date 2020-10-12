@@ -1,0 +1,19 @@
+sudo: required
+language: generic
+services:
+    - docker
+before_install:
+    - curl https://sdk.cloud.google.com | bash > /dev/null;
+    - source $HOME/google-cloud-sdk/path.bash.inc
+    - gcloud components update kubectl
+    - docker build -t locnguyen1986/docker-complex -f ./client/Dockerfile.dev ./client
+script:
+    - docker run -e CI=true locnguyen1986/docker-complex npm test -- --coverage
+after_success:
+    - docker build -t locnguyen1986/complex-k8s-client ./client   
+    - docker build -t locnguyen1986/complex-k8s-server ./server    
+    - docker build -t locnguyen1986/complex-k8s-worker ./worker
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+    - docker push locnguyen1986/complex-k8s-client
+    - docker push locnguyen1986/complex-k8s-server
+    - docker push locnguyen1986/complex-k8s-worker

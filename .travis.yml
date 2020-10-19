@@ -8,11 +8,10 @@ env:
         - CLOUDSDK_CORE_DISABLE_PROMPTS=1
 before_install:  
     - openssl aes-256-cbc -K $encrypted_49d82298217e_key -iv $encrypted_49d82298217e_iv -in complex-k8s-292309-27e0b2291cd3.json.enc -out complex-k8s-292309-27e0b2291cd3.json -d
-    - export CLOUDSDK_CORE_DISABLE_PROMPTS=1;
     - curl https://sdk.cloud.google.com | bash > /dev/null;
     - gcloud version
     - source $HOME/google-cloud-sdk/path.bash.inc
-    - gcloud auth activate-service-account complex-k8s-292309-27e0b2291cd3.json
+    - gcloud auth activate-service-account complex-k8s-292309-27e0b2291cd3.json.enc
     - gcloud config set project complex-k8s-292309
     - gcloud config set compute/zone us-central1-a
     - gcloud container clusters get-credentials complex-cluster

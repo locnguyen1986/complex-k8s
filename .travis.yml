@@ -2,20 +2,28 @@ sudo: required
 language: generic
 services:
     - docker
-before_install:
+env:
+    global:
+        - SHA=$(git rev-parse HEAD)
+        - CLOUDSDK_CORE_DISABLE_PROMPTS=1
+before_install:  
+    - openssl aes-256-cbc -K $encrypted_49d82298217e_key -iv $encrypted_49d82298217e_iv -in complex-k8s-292309-27e0b2291cd3.json.enc -out complex-k8s-292309-27e0b2291cd3.json -d
     - export CLOUDSDK_CORE_DISABLE_PROMPTS=1;
     - curl https://sdk.cloud.google.com | bash > /dev/null;
     - gcloud version
     - source $HOME/google-cloud-sdk/path.bash.inc
+    - gcloud auth activate-service-account complex-k8s-292309-27e0b2291cd3.json
+    - gcloud config set project complex-k8s-292309
+    - gcloud config set compute/zone us-central1-a
+    - gcloud container clusters get-credentials complex-cluster
     - gcloud components update kubectl
     - docker build -t locnguyen1986/docker-complex -f ./client/Dockerfile.dev ./client
 script:
     - docker run -e CI=true locnguyen1986/docker-complex npm test -- --coverage
 after_success:
-    - docker build -t locnguyen1986/complex-k8s-client ./client   
-    - docker build -t locnguyen1986/complex-k8s-server ./server    
-    - docker build -t locnguyen1986/complex-k8s-worker ./worker
-    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-    - docker push locnguyen1986/complex-k8s-client
-    - docker push locnguyen1986/complex-k8s-server
-    - docker push locnguyen1986/complex-k8s-worker
+    - echo 'NOTHING HERE'
+deploy:
+    provider: script
+    script: bash ./deploy.sh
+    on: 
+        branch: master

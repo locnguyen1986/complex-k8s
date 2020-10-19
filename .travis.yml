@@ -11,7 +11,7 @@ before_install:
     - curl https://sdk.cloud.google.com | bash > /dev/null;
     - gcloud version
     - source $HOME/google-cloud-sdk/path.bash.inc
-    - gcloud auth activate-service-account complex-k8s-292309-27e0b2291cd3.json.enc
+    - gcloud auth activate-service-account --key-file complex-k8s-292309-27e0b2291cd3.json.enc
     - gcloud config set project complex-k8s-292309
     - gcloud config set compute/zone us-central1-a
     - gcloud container clusters get-credentials complex-cluster
